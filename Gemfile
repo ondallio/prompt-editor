@@ -53,7 +53,7 @@ group :development do
 end
 
 # AI API clients
-gem "ruby-openai", "~> 7.0"
+gem "ruby-openai", "~> 8.3"
 gem "anthropic", "~> 0.3"
 gem "faraday", "~> 2.0"
 
