@@ -28,6 +28,7 @@
               <% end %>
               <div class="flex gap-1">
                 <%= link_to "프롬프트", prompts_path, class: "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium #{request.path.start_with?('/prompts') || request.path == '/' ? 'bg-gray-700 text-white' : ''}" %>
+                <%= link_to "노트", notes_path, class: "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium #{request.path.start_with?('/notes') ? 'bg-gray-700 text-white' : ''}" %>
                 <%= link_to "카테고리", categories_path, class: "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium #{request.path.start_with?('/categories') ? 'bg-gray-700 text-white' : ''}" %>
                 <%= link_to "AI 설정", ai_providers_path, class: "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium #{request.path.start_with?('/ai_providers') ? 'bg-gray-700 text-white' : ''}" %>
                 <%= link_to "실행 기록", executions_path, class: "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium #{request.path.start_with?('/executions') ? 'bg-gray-700 text-white' : ''}" %>

@@ -1,0 +1,57 @@
+<%= turbo_stream.replace "note-tags" do %>
+  <div class="bg-white rounded-lg border border-gray-200 p-6" id="note-tags">
+    <h3 class="text-sm font-semibold text-gray-900 mb-3">태그</h3>
+    <% if @note.tags.any? %>
+      <div class="flex flex-wrap gap-2">
+        <% @note.tags.reload.each do |tag| %>
+          <%= link_to tag_path(tag.name), class: "inline-flex items-center rounded-full px-3 py-1 text-sm font-medium hover:opacity-80", style: "background-color: #{tag.color || '#6366F1'}20; color: #{tag.color || '#6366F1'}" do %>
+            #<%= tag.name %>
+            <% note_tag = @note.note_tags.find_by(tag: tag) %>
+            <% if note_tag&.ai_generated? %>
+              <span class="ml-1 text-xs opacity-60">AI</span>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-sm text-gray-400">태그가 없습니다.</p>
+    <% end %>
+  </div>
+<% end %>
+
+<%= turbo_stream.replace "note-links" do %>
+  <div class="bg-white rounded-lg border border-gray-200 p-6" id="note-links">
+    <h3 class="text-sm font-semibold text-gray-900 mb-3">링크</h3>
+    <% links = @note.outgoing_links.reload.includes(:target_note) %>
+    <% if links.any? %>
+      <div class="space-y-2">
+        <% links.each do |link| %>
+          <div class="flex items-center justify-between text-sm">
+            <% if link.target_note %>
+              <%= link_to "[[#{link.linked_text}]]", link.target_note, class: "text-indigo-600 hover:text-indigo-500 font-medium" %>
+            <% else %>
+              <%= link_to "[[#{link.linked_text}]]", new_note_path(title: link.linked_text), class: "text-orange-500 hover:text-orange-400 font-medium" %>
+            <% end %>
+            <% if link.ai_generated? %>
+              <span class="text-xs text-gray-400">AI</span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-sm text-gray-400">링크가 없습니다.</p>
+    <% end %>
+  </div>
+<% end %>
+
+<%= turbo_stream.replace "auto-tag-status" do %>
+  <div id="auto-tag-status">
+    <% if @result[:error] %>
+      <div class="mt-3 rounded-md bg-red-50 p-3 text-sm text-red-700"><%= @result[:error] %></div>
+    <% else %>
+      <div class="mt-3 rounded-md bg-green-50 p-3 text-sm text-green-700">
+        태그 <%= @result[:tags].size %>개, 링크 <%= @result[:links].size %>개 추가됨
+      </div>
+    <% end %>
+  </div>
+<% end %>

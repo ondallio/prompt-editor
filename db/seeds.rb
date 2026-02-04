@@ -264,10 +264,77 @@ if provider && blog_post
 end
 
 puts "실행 기록 #{Execution.count}개 생성 완료"
+
+# ===========================================
+# 샘플 노트 + 태그
+# ===========================================
+tags_data = {
+  "프로그래밍" => "#3B82F6",
+  "ai" => "#8B5CF6",
+  "생산성" => "#10B981",
+  "아이디어" => "#F59E0B",
+  "독서" => "#EC4899",
+  "회고" => "#06B6D4",
+  "제텔카스텐" => "#6366F1",
+  "프롬프트엔지니어링" => "#EF4444"
+}
+
+tags_data.each do |name, color|
+  Tag.find_or_create_by!(name: name) { |t| t.color = color }
+end
+
+notes_data = [
+  {
+    title: "제텔카스텐 방법론",
+    content: "- [[제텔카스텐]]은 니클라스 루만이 만든 지식 관리 시스템이다\n  - 영구 노트, 문헌 노트, 임시 노트로 구성\n  - 핵심은 노트 간의 연결\n- [[롬 리서치]]가 디지털 제텔카스텐 도구로 인기\n- #제텔카스텐 #생산성 #아이디어",
+    tags: ["제텔카스텐", "생산성", "아이디어"]
+  },
+  {
+    title: "프롬프트 엔지니어링 팁",
+    content: "- 좋은 프롬프트의 핵심 요소\n  - 역할 부여 (You are a...)\n  - 구체적인 지시사항\n  - 출력 형식 지정\n  - 예시 제공 (Few-shot)\n- [[Chain of Thought]] 기법이 복잡한 추론에 효과적\n- [[프롬프트 엔지니어링]]은 AI 활용의 핵심 스킬\n- #ai #프롬프트엔지니어링",
+    tags: ["ai", "프롬프트엔지니어링"]
+  },
+  {
+    title: "Rails Hotwire 학습 메모",
+    content: "- Hotwire = Turbo + Stimulus\n  - Turbo Drive: 페이지 전환 가속화\n  - Turbo Frames: 부분 업데이트\n  - Turbo Streams: 실시간 변경\n- Stimulus는 최소한의 JS로 인터랙션 추가\n- [[Ruby on Rails]]와 완벽하게 통합\n- SPA 없이도 반응형 웹 구현 가능\n- #프로그래밍",
+    tags: ["프로그래밍"]
+  },
+  {
+    title: "AI 에이전트 트렌드 2026",
+    content: "- 2026년 AI의 핵심 트렌드는 에이전트\n  - 자율적으로 작업을 수행하는 AI\n  - 도구 사용 능력이 핵심\n- [[Claude]]와 [[ChatGPT]] 모두 에이전트 기능 강화\n- [[프롬프트 엔지니어링]]이 에이전트 설계에도 중요\n- MCP (Model Context Protocol) 표준화 진행 중\n- #ai #아이디어",
+    tags: ["ai", "아이디어"]
+  },
+  {
+    title: "주간 회고 - 생산성 도구",
+    content: "- 이번 주 사용한 도구들 정리\n  - [[제텔카스텐]] 방식으로 노트 정리 시작\n  - [[프롬프트 엔지니어링]] 학습에 집중\n  - Rails 프로젝트 진행\n- 배운 점: 작은 단위로 메모하는 것이 중요\n- 다음 주 목표: AI 자동화 파이프라인 구축\n- #회고 #생산성",
+    tags: ["회고", "생산성"]
+  }
+]
+
+notes_data.each do |data|
+  note = Note.find_or_create_by!(title: data[:title]) do |n|
+    n.content = data[:content]
+  end
+
+  data[:tags].each do |tag_name|
+    tag = Tag.find_by!(name: tag_name)
+    note.note_tags.find_or_create_by!(tag: tag, ai_generated: false)
+  end
+
+  # [[링크]] 자동 추출
+  note.extract_wiki_links.each do |text|
+    note.outgoing_links.find_or_create_by!(linked_text: text, ai_generated: false)
+  end
+end
+
+puts "노트 #{Note.count}개, 태그 #{Tag.count}개 생성 완료"
+
 puts "=" * 50
 puts "Seed 완료!"
 puts "  카테고리: #{Category.count}개"
 puts "  프롬프트: #{Prompt.count}개"
 puts "  AI Provider: #{AiProvider.count}개"
 puts "  실행 기록: #{Execution.count}개"
+puts "  노트: #{Note.count}개"
+puts "  태그: #{Tag.count}개"
 puts "=" * 50

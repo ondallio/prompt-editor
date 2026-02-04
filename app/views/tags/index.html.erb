@@ -1,0 +1,21 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">태그</h1>
+</div>
+
+<% if @tags.any? %>
+  <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <div class="flex flex-wrap gap-3">
+      <% @tags.each do |tag| %>
+        <%= link_to tag_path(tag.name), class: "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium hover:shadow-md transition-shadow", style: "background-color: #{tag.color || '#6366F1'}15; color: #{tag.color || '#6366F1'}; border: 1px solid #{tag.color || '#6366F1'}30" do %>
+          <span>#<%= tag.name %></span>
+          <span class="rounded-full bg-white px-2 py-0.5 text-xs"><%= tag.notes_count %></span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="text-center py-12 bg-white rounded-lg border border-dashed border-gray-300">
+    <h3 class="text-sm font-semibold text-gray-900">태그가 없습니다</h3>
+    <p class="mt-1 text-sm text-gray-500">노트를 작성하면 태그가 자동으로 생성됩니다.</p>
+  </div>
+<% end %>

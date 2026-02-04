@@ -1,0 +1,33 @@
+<div class="flex items-center justify-between mb-6">
+  <div class="flex items-center gap-3">
+    <h1 class="text-2xl font-bold text-gray-900">#<%= @tag.name %></h1>
+    <span class="rounded-full px-3 py-1 text-sm font-medium text-white" style="background-color: <%= @tag.color || '#6366F1' %>">
+      <%= @tag.notes_count %>개 노트
+    </span>
+  </div>
+  <%= link_to "모든 태그", tags_path, class: "text-sm text-gray-500 hover:text-gray-700" %>
+</div>
+
+<%# Tagged Notes %>
+<% if @tagged_notes.any? %>
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">
+    <span class="text-indigo-600">Tagged</span> Notes
+  </h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <% @tagged_notes.each do |note| %>
+      <%= render "notes/card", note: note %>
+    <% end %>
+  </div>
+<% end %>
+
+<%# Unlinked Mentions %>
+<% if @unlinked_notes.any? %>
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">
+    <span class="text-orange-500">Unlinked</span> Mentions
+  </h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <% @unlinked_notes.each do |note| %>
+      <%= render "notes/card", note: note %>
+    <% end %>
+  </div>
+<% end %>

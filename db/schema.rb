@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_04_004756) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_04_071727) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -49,6 +49,39 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_04_004756) do
     t.index ["prompt_id"], name: "index_executions_on_prompt_id"
   end
 
+  create_table "note_links", force: :cascade do |t|
+    t.bigint "source_note_id", null: false
+    t.bigint "target_note_id"
+    t.string "linked_text", null: false
+    t.boolean "ai_generated", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["linked_text"], name: "index_note_links_on_linked_text"
+    t.index ["source_note_id", "linked_text"], name: "index_note_links_on_source_note_id_and_linked_text", unique: true
+    t.index ["source_note_id"], name: "index_note_links_on_source_note_id"
+    t.index ["target_note_id"], name: "index_note_links_on_target_note_id"
+  end
+
+  create_table "note_tags", force: :cascade do |t|
+    t.bigint "note_id", null: false
+    t.bigint "tag_id", null: false
+    t.boolean "ai_generated", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["note_id", "tag_id"], name: "index_note_tags_on_note_id_and_tag_id", unique: true
+    t.index ["note_id"], name: "index_note_tags_on_note_id"
+    t.index ["tag_id"], name: "index_note_tags_on_tag_id"
+  end
+
+  create_table "notes", force: :cascade do |t|
+    t.string "title"
+    t.text "content", null: false
+    t.boolean "favorite", default: false
+    t.datetime "ai_tagged_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "prompt_variables", force: :cascade do |t|
     t.bigint "prompt_id", null: false
     t.string "name"
@@ -82,8 +115,21 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_04_004756) do
     t.index ["category_id"], name: "index_prompts_on_category_id"
   end
 
+  create_table "tags", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "color"
+    t.integer "notes_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_tags_on_name", unique: true
+  end
+
   add_foreign_key "executions", "ai_providers"
   add_foreign_key "executions", "prompts"
+  add_foreign_key "note_links", "notes", column: "source_note_id"
+  add_foreign_key "note_links", "notes", column: "target_note_id"
+  add_foreign_key "note_tags", "notes"
+  add_foreign_key "note_tags", "tags"
   add_foreign_key "prompt_variables", "prompts"
   add_foreign_key "prompt_versions", "prompts"
   add_foreign_key "prompts", "categories"

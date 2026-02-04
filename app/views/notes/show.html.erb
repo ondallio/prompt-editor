@@ -1,0 +1,139 @@
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <%# 왼쪽: 노트 상세 + 백링크 %>
+  <div class="lg:col-span-2 space-y-6">
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900"><%= @note.display_title %></h1>
+          <p class="mt-1 text-sm text-gray-500"><%= @note.updated_at.strftime("%Y-%m-%d %H:%M") %></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <turbo-frame id="favorite-btn">
+            <%= button_to toggle_favorite_note_path(@note), method: :post, class: "p-1.5 rounded-md hover:bg-gray-100" do %>
+              <% if @note.favorite %>
+                <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <% else %>
+                <svg class="h-5 w-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+              <% end %>
+            <% end %>
+          </turbo-frame>
+          <%= link_to "수정", edit_note_path(@note), class: "rounded-md bg-white px-3 py-1.5 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+          <%= button_to "삭제", note_path(@note), method: :delete, class: "rounded-md bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 ring-1 ring-inset ring-red-200 hover:bg-red-100", data: { turbo_confirm: "정말 삭제하시겠습니까?" } %>
+        </div>
+      </div>
+
+      <div class="prose prose-sm max-w-none">
+        <div class="bg-gray-50 rounded-md p-4 text-sm text-gray-800 whitespace-pre-wrap leading-relaxed" id="note-content"><%= render_note_content(@note) %></div>
+      </div>
+    </div>
+
+    <%# Linked References %>
+    <% if @linked_references.any? %>
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">
+          <span class="text-indigo-600">Linked</span> References
+          <span class="ml-1 text-sm font-normal text-gray-500">(<%= @linked_references.size %>)</span>
+        </h2>
+        <div class="space-y-3">
+          <% @linked_references.each do |ref_note| %>
+            <div class="p-3 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors">
+              <%= link_to ref_note.display_title, ref_note, class: "text-sm font-semibold text-indigo-600 hover:text-indigo-500" %>
+              <p class="text-xs text-gray-500 mt-1 line-clamp-2"><%= ref_note.preview_text(100) %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Unlinked References %>
+    <% if @unlinked_references.any? %>
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">
+          <span class="text-orange-500">Unlinked</span> References
+          <span class="ml-1 text-sm font-normal text-gray-500">(<%= @unlinked_references.size %>)</span>
+        </h2>
+        <div class="space-y-3">
+          <% @unlinked_references.each do |ref_note| %>
+            <div class="p-3 rounded-md bg-orange-50/50 hover:bg-orange-50 transition-colors">
+              <%= link_to ref_note.display_title, ref_note, class: "text-sm font-semibold text-orange-600 hover:text-orange-500" %>
+              <p class="text-xs text-gray-500 mt-1 line-clamp-2"><%= ref_note.preview_text(100) %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# 오른쪽: 태그 + 링크 + AI 패널 %>
+  <div class="space-y-6">
+    <%# 태그 %>
+    <div class="bg-white rounded-lg border border-gray-200 p-6" id="note-tags">
+      <h3 class="text-sm font-semibold text-gray-900 mb-3">태그</h3>
+      <% if @note.tags.any? %>
+        <div class="flex flex-wrap gap-2">
+          <% @note.tags.each do |tag| %>
+            <%= link_to tag_path(tag.name), class: "inline-flex items-center rounded-full px-3 py-1 text-sm font-medium hover:opacity-80", style: "background-color: #{tag.color || '#6366F1'}20; color: #{tag.color || '#6366F1'}" do %>
+              #<%= tag.name %>
+              <% note_tag = @note.note_tags.find_by(tag: tag) %>
+              <% if note_tag&.ai_generated? %>
+                <span class="ml-1 text-xs opacity-60">AI</span>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-400">태그가 없습니다.</p>
+      <% end %>
+    </div>
+
+    <%# 링크 %>
+    <div class="bg-white rounded-lg border border-gray-200 p-6" id="note-links">
+      <h3 class="text-sm font-semibold text-gray-900 mb-3">링크</h3>
+      <% if @outgoing_links.any? %>
+        <div class="space-y-2">
+          <% @outgoing_links.each do |link| %>
+            <div class="flex items-center justify-between text-sm">
+              <% if link.target_note %>
+                <%= link_to "[[#{link.linked_text}]]", link.target_note, class: "text-indigo-600 hover:text-indigo-500 font-medium" %>
+              <% else %>
+                <%= link_to "[[#{link.linked_text}]]", new_note_path(title: link.linked_text), class: "text-orange-500 hover:text-orange-400 font-medium" %>
+              <% end %>
+              <% if link.ai_generated? %>
+                <span class="text-xs text-gray-400">AI</span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-400">링크가 없습니다.</p>
+      <% end %>
+    </div>
+
+    <%# AI 자동 태깅 %>
+    <div class="bg-white rounded-lg border border-gray-200 p-6" id="auto-tag-panel">
+      <h3 class="text-sm font-semibold text-gray-900 mb-3">AI 자동 태깅</h3>
+      <% if @note.ai_tagged_at %>
+        <p class="text-xs text-gray-500 mb-3">마지막 태깅: <%= time_ago_in_words(@note.ai_tagged_at) %> 전</p>
+      <% end %>
+
+      <%= form_with url: auto_tag_note_path(@note), method: :post, data: { controller: "auto-tag" } do |f| %>
+        <% if @ai_providers.any? %>
+          <select name="ai_provider_id" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm mb-3">
+            <% @ai_providers.each do |provider| %>
+              <option value="<%= provider.id %>"><%= provider.name %></option>
+            <% end %>
+          </select>
+          <button type="submit" class="w-full rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-50" data-auto-tag-target="button">
+            AI 자동 태깅
+          </button>
+        <% else %>
+          <p class="text-sm text-amber-600">
+            <%= link_to "AI 프로바이더를 먼저 등록하세요", new_ai_provider_path, class: "underline" %>
+          </p>
+        <% end %>
+      <% end %>
+
+      <div id="auto-tag-status"></div>
+    </div>
+  </div>
+</div>
