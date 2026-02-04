@@ -1,0 +1,31 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">카테고리</h1>
+  <%= link_to "새 카테고리", new_category_path, class: "inline-flex items-center gap-1 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-200">
+  <% if @categories.any? %>
+    <ul class="divide-y divide-gray-200">
+      <% @categories.each do |category| %>
+        <li class="flex items-center justify-between p-4">
+          <div class="flex items-center gap-3">
+            <div class="h-4 w-4 rounded-full" style="background-color: <%= category.color || '#6366F1' %>"></div>
+            <div>
+              <p class="font-medium text-gray-900"><%= category.name %></p>
+              <p class="text-sm text-gray-500"><%= category.description %></p>
+            </div>
+            <span class="text-xs text-gray-400"><%= category.prompts.count %>개 프롬프트</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <%= link_to "수정", edit_category_path(category), class: "text-sm text-indigo-600 hover:text-indigo-500" %>
+            <%= button_to "삭제", category_path(category), method: :delete, class: "text-sm text-red-600 hover:text-red-500", data: { turbo_confirm: "정말 삭제하시겠습니까?" } %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <div class="text-center py-8">
+      <p class="text-sm text-gray-500">카테고리가 없습니다.</p>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,38 @@
+<%= form_with(model: prompt, class: "space-y-6") do |f| %>
+  <% if prompt.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4 border border-red-200">
+      <ul class="text-sm text-red-700 list-disc pl-5">
+        <% prompt.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :title, "제목", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_field :title, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm", placeholder: "프롬프트 제목을 입력하세요" %>
+  </div>
+
+  <div>
+    <%= f.label :category_id, "카테고리", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.collection_select :category_id, @categories, :id, :name, { include_blank: "카테고리 없음" }, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm" %>
+  </div>
+
+  <div>
+    <%= f.label :system_prompt, "시스템 프롬프트 (선택)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_area :system_prompt, rows: 4, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm font-mono", placeholder: "AI의 역할을 정의하세요. 예: 당신은 전문 번역가입니다." %>
+    <p class="mt-1 text-xs text-gray-500">{{변수명}} 형식으로 변수를 사용할 수 있습니다.</p>
+  </div>
+
+  <div>
+    <%= f.label :content, "프롬프트 내용", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_area :content, rows: 12, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm font-mono", placeholder: "프롬프트를 작성하세요.\n{{변수명}} 형식으로 동적 변수를 사용할 수 있습니다.\n\n예시:\n{{언어}}로 {{주제}}에 대해 설명해주세요.", data: { controller: "autosize" } %>
+    <p class="mt-1 text-xs text-gray-500">{{변수명}} 형식의 변수는 실행 시 자동으로 감지됩니다.</p>
+  </div>
+
+  <div class="flex justify-end gap-3">
+    <%= link_to "취소", prompt.persisted? ? prompt_path(prompt) : prompts_path, class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+    <%= f.submit prompt.persisted? ? "수정" : "생성", class: "rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 cursor-pointer" %>
+  </div>
+<% end %>

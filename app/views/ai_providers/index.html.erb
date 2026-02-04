@@ -1,0 +1,37 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">AI 프로바이더</h1>
+  <%= link_to "새 프로바이더", new_ai_provider_path, class: "inline-flex items-center gap-1 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <% @ai_providers.each do |provider| %>
+    <div class="bg-white rounded-lg border border-gray-200 p-5">
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <h3 class="font-semibold text-gray-900"><%= provider.name %></h3>
+          <p class="text-sm text-gray-500"><%= provider.provider_type.capitalize %> · <%= provider.ai_model %></p>
+        </div>
+        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium <%= provider.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' %>">
+          <%= provider.active ? '활성' : '비활성' %>
+        </span>
+      </div>
+      <div class="flex items-center gap-2 text-sm">
+        <span class="text-gray-400">API Key: ****<%= provider.api_key&.last(4) %></span>
+      </div>
+      <div class="flex items-center gap-3 mt-4">
+        <%= link_to "수정", edit_ai_provider_path(provider), class: "text-sm text-indigo-600 hover:text-indigo-500" %>
+        <%= button_to "삭제", ai_provider_path(provider), method: :delete, class: "text-sm text-red-600 hover:text-red-500", data: { turbo_confirm: "정말 삭제하시겠습니까?" } %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if @ai_providers.empty? %>
+  <div class="text-center py-12 bg-white rounded-lg border border-dashed border-gray-300">
+    <h3 class="text-sm font-semibold text-gray-900">등록된 AI 프로바이더가 없습니다</h3>
+    <p class="mt-1 text-sm text-gray-500">프롬프트 실행을 위해 AI 프로바이더를 등록하세요.</p>
+    <div class="mt-4">
+      <%= link_to "프로바이더 등록", new_ai_provider_path, class: "inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
+    </div>
+  </div>
+<% end %>

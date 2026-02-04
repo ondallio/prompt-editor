@@ -1,0 +1,47 @@
+<%= form_with(model: ai_provider, class: "space-y-6", data: { controller: "provider-form" }) do |f| %>
+  <% if ai_provider.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4 border border-red-200">
+      <ul class="text-sm text-red-700 list-disc pl-5">
+        <% ai_provider.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, "이름", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_field :name, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm", placeholder: "예: My OpenAI GPT-4o" %>
+  </div>
+
+  <div>
+    <%= f.label :provider_type, "프로바이더 유형", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.select :provider_type, [["OpenAI", "openai"], ["Anthropic", "anthropic"], ["Gemini", "gemini"], ["Custom", "custom"]], {}, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm", data: { action: "change->provider-form#updateModels", "provider-form-target": "providerType" } %>
+  </div>
+
+  <div>
+    <%= f.label :ai_model, "모델", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_field :ai_model, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm", placeholder: "예: gpt-4o, claude-sonnet-4-20250514", data: { "provider-form-target": "modelInput" } %>
+    <p class="mt-1 text-xs text-gray-500">모델 ID를 입력하세요.</p>
+  </div>
+
+  <div>
+    <%= f.label :api_key, "API Key", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_field :api_key, type: "password", class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm", placeholder: "sk-..." %>
+  </div>
+
+  <div>
+    <%= f.label :endpoint_url, "엔드포인트 URL (Custom만)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.url_field :endpoint_url, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm", placeholder: "https://api.example.com/v1/chat/completions" %>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <%= f.check_box :active, class: "rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" %>
+    <%= f.label :active, "활성화", class: "text-sm font-medium text-gray-700" %>
+  </div>
+
+  <div class="flex justify-end gap-3">
+    <%= link_to "취소", ai_providers_path, class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+    <%= f.submit ai_provider.persisted? ? "수정" : "등록", class: "rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 cursor-pointer" %>
+  </div>
+<% end %>

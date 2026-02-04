@@ -1,0 +1,27 @@
+<div class="max-w-xl mx-auto">
+  <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <h1 class="text-2xl font-bold text-gray-900 mb-4"><%= @ai_provider.name %></h1>
+    <dl class="space-y-3">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">유형</dt>
+        <dd class="text-sm text-gray-900"><%= @ai_provider.provider_type.capitalize %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">모델</dt>
+        <dd class="text-sm text-gray-900"><%= @ai_provider.ai_model %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">API Key</dt>
+        <dd class="text-sm text-gray-900">****<%= @ai_provider.api_key&.last(4) %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">상태</dt>
+        <dd class="text-sm"><%= @ai_provider.active ? '활성' : '비활성' %></dd>
+      </div>
+    </dl>
+    <div class="mt-6 flex gap-3">
+      <%= link_to "수정", edit_ai_provider_path(@ai_provider), class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
+      <%= link_to "목록", ai_providers_path, class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+    </div>
+  </div>
+</div>

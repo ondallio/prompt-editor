@@ -1,0 +1,38 @@
+<%= form_with(model: category, class: "space-y-6") do |f| %>
+  <% if category.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4 border border-red-200">
+      <ul class="text-sm text-red-700 list-disc pl-5">
+        <% category.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, "이름", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_field :name, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm", placeholder: "카테고리 이름" %>
+  </div>
+
+  <div>
+    <%= f.label :description, "설명", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_area :description, rows: 2, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm", placeholder: "카테고리 설명 (선택)" %>
+  </div>
+
+  <div>
+    <%= f.label :color, "색상", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <div class="flex items-center gap-3">
+      <%= f.color_field :color, value: category.color || "#6366F1", class: "h-10 w-14 rounded border border-gray-300 cursor-pointer" %>
+      <div class="flex gap-2">
+        <% Category::COLORS.each do |color| %>
+          <button type="button" class="h-6 w-6 rounded-full border-2 border-transparent hover:border-gray-400 color-picker-btn" style="background-color: <%= color %>" data-color="<%= color %>" onclick="document.getElementById('<%= f.field_id(:color) %>').value = '<%= color %>'"></button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3">
+    <%= link_to "취소", categories_path, class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+    <%= f.submit category.persisted? ? "수정" : "생성", class: "rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 cursor-pointer" %>
+  </div>
+<% end %>

@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Daehan';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.1/Daehan-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Daehan';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.1/Daehan-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@theme {
+  --font-sans: 'Daehan', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
