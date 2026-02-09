@@ -55,5 +55,5 @@ end
 # AI API clients
 gem "ruby-openai", "~> 7.0"
 gem "anthropic", "~> 0.3"
-gem "faraday", "~> 2.0"
+gem "faraday", "~> 2.14"
 
